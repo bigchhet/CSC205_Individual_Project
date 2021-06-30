@@ -1,0 +1,780 @@
+using System;
+
+/*
+ This project is a free 6 week program meant to help beginners in the gym achieve their fitness goals. 
+They are able to monitor their results and see which workouts are correlated with each day of the week.
+The user is unable to leave the program until they enter a phone number.
+I decided to include that feature in the program in order to send paid for products to the user in the future.
+ */
+
+namespace CSC205_IndividualProject
+{
+    class Program
+    {
+        private static double number;
+
+        static void Main(string[] args)
+        {
+            //Declare user object
+            User user = new User();
+
+            //Prompts user to get info
+            GetInfo(user);
+            user.UserInfo();
+            user.GreetUser();
+            UserMenu(user);
+
+            //This method takes the user to other method to retrieve their public data
+            static void GetInfo(User user)
+            {
+                GetName(user);
+                GetWeight(user);
+                GetHeight(user);
+                GetGender(user);
+                GetAge(user);
+            }
+
+            //Prompts user to enter their height
+            static string GetHeight(User user)
+            {
+                Console.WriteLine($"{user.name}, please enter height in inches: ");
+                user.height = Convert.ToDouble(Console.ReadLine());
+                return "Thanks for inputing your height";
+
+            }
+
+            //Prompts user to enter their name
+            static string GetName(User user)
+            {
+                Console.WriteLine("Hello what is your name: ");
+                user.name = Console.ReadLine();
+                return $"Nice to meet you {user.name}";
+            }
+            
+            //Prompts user to enter their weight
+            static string GetWeight(User user)
+            {
+                Console.WriteLine($"{user.name}, please enter weight in lbs: ");
+                user.weight = Convert.ToDouble(Console.ReadLine());
+                return "Thanks for inputing your weight";
+            }
+
+            //Prompts user to enter their gender, encourages male/female input but does not restrict
+            static string GetGender(User user)
+            {
+                Console.WriteLine($"{user.name}, please enter your gender (male/female): ");
+                user.gender = Console.ReadLine();
+                return "Thank you for telling me your gender";
+            }
+
+            //Prompts user to enter their age
+            static string GetAge(User user)
+            {
+                Console.WriteLine($"{user.name}, please enter your age: ");
+                user.age = Convert.ToDouble(Console.ReadLine());
+                return "Thank you for telling me your age";
+            }
+
+            //This method is the main menu where the user can decide what to do next
+            static void UserMenu(User user)
+            {
+                int input1;
+
+                //Triggers a do while method until the user decides to exit the program
+                do
+                {
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine("Main menu");
+                    Console.WriteLine("--------------");
+                    Console.WriteLine("View user info (Enter 1)");
+                    Console.WriteLine("Workout plan details (Enter 2)");
+                    Console.WriteLine("Input Max lift numbers (Enter 3)");
+                    Console.WriteLine("BMI calculator (Enter 4)");
+                    Console.WriteLine("Exit Main Menu (ENTER 5)");
+                    input1 = Int32.Parse(Console.ReadLine());
+                    decision(input1, user);
+                }
+                while (input1 != 5);
+
+                //This method is actually where the program determines what should happen based on user input
+                static void decision(int input1, User user)
+                {
+                    //Option 1 allows user to review their inputed data which is public
+                    if (input1 == 1)
+                    {
+                        user.UserInfo();
+                    }
+
+                    //Option 2 allows user to view the various workout routines
+                    else if (input1 == 2)
+                    {
+                        WorkoutPlan view = new WorkoutPlan();
+                        view.ViewWorkout();
+                    }
+
+                    //Option 3 allows user to input their weekly max lifts
+                    else if (input1 == 3)
+                    {
+                        Console.WriteLine("I recommended inputing multiple week's worth of data");
+                        MaxLift.Menu();
+                    }
+
+                    //Option 4 allows user to view their BMI based on what they input earlier
+                    else if (input1 == 4)
+                    {
+                        Console.WriteLine("Here is your current BMI: ");
+                        Console.WriteLine(user.BMI(user));
+                    }
+
+                    //Option forces the user to input their number before they can leave. The number is kept private.
+                    else if (input1 == 5)
+                    {
+                        Console.WriteLine($"{user.name}, I see you are ready to leave.");
+                        Console.WriteLine("Before you go please enter your phone number to continue your free trial:");
+                        number = Convert.ToDouble(Console.ReadLine());
+
+                        do
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Please enter a phone number to continue your free trial:");
+                            number = Convert.ToDouble(Console.ReadLine());
+                        }
+                        while ((number <= 1000000000) && (number >= 1000000));
+
+                        //Once the user enters an approriate number, the user can finally exit program.
+                        Console.WriteLine("-------------------------------------");
+                        Console.WriteLine("Thank you for entering you phone number: ");
+                        Console.WriteLine(number);
+                        Console.WriteLine();
+                        Console.WriteLine($"Have a good day {user.name}! Hope to see you soon.");
+                       
+                    }
+
+                    //This requires the user to keep using the main menu until they input an appropriate response.
+                    else
+                    {
+                        Console.WriteLine("Invalid response");
+                        UserMenu(user);
+                    }
+                }
+
+
+            }
+
+        }
+
+    }
+
+ 
+    public class MaxLift
+    {
+        public static void Menu()
+        {
+            //Once the user decided to input their max lifts, they must decide which week view to input for
+            int input4;
+            Console.WriteLine("Which week would you like to input MaxLift Data");
+            Console.WriteLine("Week 1: (Enter 1)");
+            Console.WriteLine("Week 3: (Enter 3)");
+            Console.WriteLine("Week 6: (Enter 6)");
+            input4 = int.Parse(Console.ReadLine());
+
+            if (input4 == 1)
+            {
+                MaxLiftWeek1();
+            }
+            else if (input4 == 3)
+            {
+                MaxLiftWeek3();
+            }
+            else if (input4 == 6)
+            {
+                MaxLiftWeek6();
+            }
+            else
+            {
+                Console.WriteLine("Invalid Response");
+                Menu();
+            }
+
+        }
+
+        static void MaxLiftWeek1()
+        {
+            //Declare the variables in the array
+            double squat;
+            double bench;
+            double deadlift;
+            double total;
+            double[] MaxLift1 = new double[3];
+
+            //Prompts the user to enter each of their lifts
+            Console.WriteLine("Enter Data for your Week 1 bench: ");
+            bench = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter Data for your Week 1 squat: ");
+            squat = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter Data for your Week 1 deadlift: ");
+            deadlift = int.Parse(Console.ReadLine());
+
+            MaxLift1[0] = bench;
+            MaxLift1[1] = squat;
+            MaxLift1[2] = deadlift;
+
+            //Computes total lift performed and out puts
+            total = (bench + squat + deadlift);
+            Console.WriteLine($"Your total max lift: {total}");
+
+        }
+
+        static void MaxLiftWeek3()
+        {
+            //Declare the variables in the array
+            double squat;
+            double bench;
+            double deadlift;
+            double total;
+            double[] MaxLift3 = new double[3];
+
+            //Prompts the user to enter each of their lifts
+            Console.WriteLine("Enter Data for your Week 3 bench: ");
+            bench = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter Data for your Week 3 squat: ");
+            squat = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter Data for your Week 3 deadlift: ");
+            deadlift = int.Parse(Console.ReadLine());
+
+            MaxLift3[0] = bench;
+            MaxLift3[1] = squat;
+            MaxLift3[2] = deadlift;
+
+            //Computes total lift performed and out puts
+            total = (bench + squat + deadlift);
+            Console.WriteLine($"Your total max lift: {total}");
+        }
+
+        static void MaxLiftWeek6()
+        {
+            //Declare the variables in the array
+            double squat;
+            double bench;
+            double deadlift;
+            double total;
+            double[] MaxLift6 = new double[3];
+
+            //Prompts the user to enter each of their lifts
+            Console.WriteLine("Enter Data for your Week 6 bench: ");
+            bench = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter Data for your Week 6 squat: ");
+            squat = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter Data for your Week 6 deadlift: ");
+            deadlift = int.Parse(Console.ReadLine());
+
+            MaxLift6[0] = bench;
+            MaxLift6[1] = squat;
+            MaxLift6[2] = deadlift;
+
+            //Computes total lift performed and out puts
+            total = (bench + squat + deadlift);
+            Console.WriteLine($"Your total max lift: {total}");
+        }
+    }
+
+    public class User
+    {
+        //Declares the public variables
+        public string name { get; set; }
+        public double weight { get; set; }
+        public string gender { get; set; }
+        public double age { get; set; }
+        public double height { get; set; }
+
+        //Shows the user their inputed variables
+        public void UserInfo()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Your info thus far: ");
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine($"name: {this.name} ");
+            Console.WriteLine($"weight: {this.weight} ");
+            Console.WriteLine($"height: {this.height} ");
+            Console.WriteLine($"gender: {this.gender} ");
+            Console.WriteLine($"age: {this.age} ");
+            Console.WriteLine();
+
+        }
+
+        //This is what is shown to the user once they finish inputing their data
+        public void GreetUser() 
+        {
+            Console.WriteLine();
+            Console.WriteLine("HELLO AND WELCOME TO BIGCHHET'S STRENGTH ACADEMY!");
+            Console.WriteLine($"{this.name}, This is a FREE 6 week program designed for beginners.");
+            Console.WriteLine($"{this.name} are expected to follow the recommended workouts without question.");
+            Console.WriteLine($"Starting today, you will workout 4-6 days a week.");
+            Console.WriteLine("Lets get BIG!");
+            Console.WriteLine();
+        }
+
+        //The BM is automatically computed when user enters their data and is waiting until they press view BMI in user menu
+        public double BMI(User user) 
+        {
+            double BMI;
+            BMI = (user.weight / Math.Pow(user.height, 2))*703;
+            return BMI;
+        }
+    }
+
+    public class WorkoutPlan 
+    {
+        //Prompts the user to enter which workout plan they would like to see
+        public void ViewWorkout()
+        {
+            int input2;
+            Console.WriteLine("Which Week would you like to look at? (Please enter number 1-6)");
+            input2 = int.Parse(Console.ReadLine());
+
+            //This if-else block is used to determine which week the user will be sent to based on user input
+            if (input2 == 1)
+            {
+                Week1Workout();
+            }
+            else if (input2 == 2)
+            {
+                Week2Workout();
+            }
+            else if (input2 == 3)
+            {
+                Week3Workout();
+            }
+            else if (input2 == 4)
+            {
+                Week4Workout();
+            }
+            else if (input2 == 5)
+            {
+                Week5Workout();
+            }
+            else if (input2 == 6)
+            {
+                Week6Workout();
+            }
+            else
+            {
+                Console.WriteLine("That is not a valid response");
+                ViewWorkout();
+            }
+
+        }
+        public void Week1Workout() 
+        {
+            //Declare the values of each workout
+
+            string[] Workout1 = new string[]
+            {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout2 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout3 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10", 
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+
+            string[] MaxLift = new string[] 
+            { "flat bench press: 1 x 1", "back squat: 1 x 1", "deadlift: 1 x 1" };
+
+
+            //Determines which workout collection to view
+            int input3;
+            Console.WriteLine("Which workout would you like to see: (Enter 1-4)");
+            input3 = int.Parse(Console.ReadLine());
+
+            //Prints each workout to user based on user input using switch statements
+            switch (input3)
+            {
+                case 1:
+                    foreach (var workout in Workout1)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 2:
+                    foreach (var workout in Workout2)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 3:
+                    foreach (var workout in Workout3)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 4:
+                    foreach (var workout in MaxLift)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Invalid Response");
+                    Week1Workout();
+                    break;
+            }
+        }
+
+        public void Week2Workout() 
+        {
+            //Declare the values of each workout
+            string[] Workout1 = new string[]
+           {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout2 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout3 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+            string[] Workout4 = new string[]
+           {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout5 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout6 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+
+            //Determines which workout collection to view
+            int input3;
+            Console.WriteLine("Which workout would you like to see: (Enter 1-4)");
+            input3 = int.Parse(Console.ReadLine());
+
+            //Prints each workout to user based on user input using switch statements
+            switch (input3)
+            {
+                case 1:
+                    foreach (var workout in Workout1)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 2:
+                    foreach (var workout in Workout2)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 3:
+                    foreach (var workout in Workout3)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 4:
+                    foreach (var workout in Workout4)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 5:
+                    foreach (var workout in Workout5)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 6:
+                    foreach (var workout in Workout6)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Invalid Response");
+                    Week1Workout();
+                    break;
+            }
+        }
+
+        public void Week3Workout()
+        {
+            //Declare the values of each workout
+
+            string[] Workout1 = new string[]
+            {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout2 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout3 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+
+            string[] MaxLift = new string[]
+            { "flat bench press: 1 x 1", "back squat: 1 x 1", "deadlift: 1 x 1" };
+
+            //Determines which workout collection to view
+            int input3;
+            Console.WriteLine("Which workout would you like to see: (Enter 1-4)");
+            input3 = int.Parse(Console.ReadLine());
+
+            //Prints each workout to user based on user input using switch statements
+            switch (input3)
+            {
+                case 1:
+                    foreach (var workout in Workout1)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 2:
+                    foreach (var workout in Workout2)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 3:
+                    foreach (var workout in Workout3)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 4:
+                    foreach (var workout in MaxLift)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Invalid Response");
+                    Week1Workout();
+                    break;
+            }
+
+        }
+
+        public void Week4Workout()
+        {
+            //Declare the values of each workout
+            string[] Workout1 = new string[]
+           {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout2 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout3 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+            string[] Workout4 = new string[]
+           {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout5 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout6 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+
+            int input3;
+            Console.WriteLine("Which workout would you like to see: (Enter 1-4)");
+            input3 = int.Parse(Console.ReadLine());
+
+            //Prints each workout to user based on user input using switch statements
+            switch (input3)
+            {
+                case 1:
+                    foreach (var workout in Workout1)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 2:
+                    foreach (var workout in Workout2)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 3:
+                    foreach (var workout in Workout3)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 4:
+                    foreach (var workout in Workout4)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 5:
+                    foreach (var workout in Workout5)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 6:
+                    foreach (var workout in Workout6)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Invalid Response");
+                    Week1Workout();
+                    break;
+            }
+        }
+
+        public void Week5Workout()
+        {
+            //Declare the values of each workout
+            string[] Workout1 = new string[]
+           {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout2 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout3 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+            string[] Workout4 = new string[]
+           {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout5 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout6 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+
+            int input3;
+            Console.WriteLine("Which workout would you like to see: (Enter 1-4)");
+            input3 = int.Parse(Console.ReadLine());
+
+            //Prints each workout to user based on user input using switch statements
+            switch (input3)
+            {
+                case 1:
+                    foreach (var workout in Workout1)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 2:
+                    foreach (var workout in Workout2)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 3:
+                    foreach (var workout in Workout3)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 4:
+                    foreach (var workout in Workout4)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 5:
+                    foreach (var workout in Workout5)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 6:
+                    foreach (var workout in Workout6)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Invalid Response");
+                    Week1Workout();
+                    break;
+            }
+        }
+
+        public void Week6Workout()
+        {
+            //Declare the values of each workout
+            string[] Workout1 = new string[]
+            {"back extension: 4 x 8", "hip adductors : 4 x 19", "pull ups: 3 x 10", "deadlift: 3 x 10", "lat pull down: 4 x 8",
+            "dumbbell row: 4 x 8","bent over row: 3 x 10", "single arm seated rows: 4 x 8", "dumbbell curl: 4 x 8", "barbell curl: 4 X 8"};
+
+            string[] Workout2 = new string[]
+            {"incline dumbbell press: 5 x 8", "decline bench press: 5 x 5", "close grip bench press: 5 x 5", "cable flys: 4 x 12", "single arm dumbbell shoulder press: 3 x 12",
+            "dumbbell shrugs: 3 x 10", "delt raises: 4 x 12", "tricep pulldowns: 5 x 8" , "body weight dips: 3 x failure"};
+
+            string[] Workout3 = new string[]
+            { "hip adductors: 4 x 12", "leg extension: 5 x 8", "hamstring curl: 5 x 8", "back squat: 3 x 10", "glute raises: 3 x 10",
+            "reverse hamstring curl: 5 x 8", "dumbbell lunges: 3 x 10", "leg press: 5 x 8", "calf raises: 3 x 10" };
+
+            string[] MaxLift = new string[]
+            { "flat bench press: 1 x 1", "back squat: 1 x 1", "deadlift: 1 x 1" };
+
+            //Determines which workout collection to view
+            int input3;
+            Console.WriteLine("Which workout would you like to see: (Enter 1-4)");
+            input3 = int.Parse(Console.ReadLine());
+
+            //Prints each workout to user based on user input using switch statements
+            switch (input3)
+            {
+                case 1:
+                    foreach (var workout in Workout1)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 2:
+                    foreach (var workout in Workout2)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 3:
+                    foreach (var workout in Workout3)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                case 4:
+                    foreach (var workout in MaxLift)
+                    {
+                        Console.WriteLine(workout);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Invalid Response");
+                    Week1Workout();
+                    break;
+            }
+
+        }
+
+    }
+}
